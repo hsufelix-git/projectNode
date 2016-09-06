@@ -5,11 +5,29 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
+
+
+/**
+ * 配置数据库链接模块
+ */
+var mongoose = require('mongoose');
+var session = require('express-session');
+var MongoStore = require('connect-mongo')(session);
+
+// 自行配置一个路由（新建了一个文件夹和routes.js）
+// 配置对应的routes(app);
+var routes = require('./config/routes');
+// 自行配置数据库数据
+var DBsetting = require('./config/DBsetting');
+/**
+ * 屏蔽掉原先新建项目时，项目自新建的路由，保证路由模块化
+ */
+//var routes = require('./routes/index');
 //var users = require('./routes/users');
 
 var app = express();
-
+// 添加链接的数据库
+mongoose.connect('mongodb://localhost/blog');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 var ejs =  require('ejs');
@@ -26,6 +44,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // app.use('/', routes);
 // app.use('/users', users);
+
+app.use(session({
+  secret:"45454",
+  store:new MongoStore({
+    cookieSecret:DBsetting.cookieSecret,
+    db:DBsetting.db,
+    host:DBsetting.host
+  })
+}));
+
+
 routes(app);
 
 
@@ -59,5 +88,10 @@ app.use(function(err, req, res, next) {
     error: {}
   });
 });
-
+/**
+ * 安装数据库的时候，需要使用到的模块
+ * express-session
+ * connect-mongo
+ * 
+ */
 module.exports = app;

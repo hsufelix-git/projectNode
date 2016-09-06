@@ -1,0 +1,103 @@
+第一步：安装nodeJs，配置环境变量
+
+第二步：需要安装的全局模块
+	npm install -g express
+	npm install -g express-generator
+	npm install supervisor -g
+
+第三步：创建项目：
+	express -e blog && cd blog // 创建blog项目使用ejs模板，打开（定位到）blog文件夹
+
+
+=======================================================================
+需要链接数据库的话
+链接数据库：
+	安装所需的模块
+	express-session
+	connect-mongo
+	mongoose
+
+	// 安装的时候，直接在package.json里面修改json，不知道版本可以使用"*"号键来先代替，然后在补回去
+	安装完成后，在路由设置的前面加入下面3个模块
+	/**
+	 * 配置数据库链接模块
+	 */
+	var mongoose = require('mongoose');
+	var session = require('express-session');
+	var MongoStore = require('connect-mongo')(session);
+
+mongoose.connect('mongodb://localhost/blog');
+
+
+
+在routes(app);之前添加
+app.use(session({
+  secret:"45454",
+  store:new MongoStore({
+    cookieSecret:'felixtest',// 加密cookie的随机字符（可以乱填）
+    db:'blog',//与上面数据连接的名称要一致的
+    host:'locahost' // 主机地址
+  })
+}));
+
+
+
+=======================================================================
+修改模板就需要重新设置目前默认使用的模板有jade或者ejs
+app.set('view engine','ejs');
+app.engine('.ejs',require('ejs').__express);
+
+可以修改为
+app.set('view engine','htm');
+app.engine('.htm',require('ejs').__express);
+=========================================================================
+
+模块化路由
+/**
+ * 屏蔽掉原先新建项目时，项目自新建的路由，保证路由模块化
+ */
+//var routes = require('./routes/index');
+//var users = require('./routes/users');
+
+// app.use('/', routes);
+// app.use('/users', users);
+
+
+自己添加一个routes
+新建一个文件夹为config，然后在里面新建一个routes.js里面在写入代码
+如：
+
+module.exports = function(app) {
+
+	app.get('/register', function (req, res, next) {
+		res.render('register', { title: '注册' });
+	});
+
+	app.post('/register', function (req, res, next) {
+		var postData =  {
+			username : req.body.username,
+			password : req.body.password
+		}
+		console.log(postData);
+		
+		res.send("注册成功。");
+	});
+}
+
+var routes = require('./config/routes');
+
+// 然后在error报错的前面添加下面的这一行代码
+routes(app);
+
+
+
+
+
+
+
+
+
+
+
+
+

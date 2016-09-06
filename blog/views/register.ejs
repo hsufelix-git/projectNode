@@ -5,7 +5,19 @@
   <% include layout/nav.ejs %>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
-
+    <form method="post" action="/register">
+	    <div>
+	    	<label for="username">username</label>
+	    	<input id="username" type="text" name="username" />
+	    </div>
+		<div>
+			<label for="password">password</label>
+	    	<input id="password" type="text" name="password" />
+	    </div>
+		<div>
+	    	<input id="submit" type="submit" />
+	    </div>
+    </form>
 
   <% include layout/footer.ejs %>
   </body>
