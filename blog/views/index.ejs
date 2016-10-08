@@ -5,6 +5,12 @@
   <%- include layout/nav.ejs %>
     <h1><%= title %></h1>
     <p>Welcome to <%= title %></p>
+	<% if(user){   var url = '../user/'+ user._id; %>
+	<p><a href="<%=url %>">Welcome to <%= user.username %></a></p>
+	<% } else { %>
+		<p>请登录</p>
+	<% } %>
+    
 
 
   <%- include layout/footer.ejs %>

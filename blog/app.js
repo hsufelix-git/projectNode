@@ -5,14 +5,18 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-
-
 /**
  * 配置数据库链接模块
  */
 var mongoose = require('mongoose');
+console.info("============run mongoose========");
+console.info(mongoose);
 var session = require('express-session');
+console.info("============run session========");
+console.info(session);
 var MongoStore = require('connect-mongo')(session);
+console.info("============run MongoStore========");
+console.info(MongoStore);
 
 // 自行配置一个路由（新建了一个文件夹和routes.js）
 // 配置对应的routes(app);
@@ -45,14 +49,27 @@ app.use(express.static(path.join(__dirname, 'public')));
 // app.use('/', routes);
 // app.use('/users', users);
 
+// app.use(session({
+//   secret:"45454",
+//   store:new MongoStore({
+//     cookieSecret:DBsetting.cookieSecret,
+//     db:DBsetting.db,
+//     host:DBsetting.host
+//   })
+// }));
+
 app.use(session({
-  secret:"45454",
-  store:new MongoStore({
-    cookieSecret:DBsetting.cookieSecret,
-    db:DBsetting.db,
-    host:DBsetting.host
-  })
-}));
+  secret: DBsetting.cookieSecret,
+  key: DBsetting.db,//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    /*db: settings.db,
+    host: settings.host,
+    port: settings.port*/
+    url: 'mongodb://localhost/blog'
+  })}));
 
 
 routes(app);

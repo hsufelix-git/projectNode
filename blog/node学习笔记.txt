@@ -32,13 +32,20 @@ mongoose.connect('mongodb://localhost/blog');
 
 在routes(app);之前添加
 app.use(session({
-  secret:"45454",
-  store:new MongoStore({
-    cookieSecret:'felixtest',// 加密cookie的随机字符（可以乱填）
-    db:'blog',//与上面数据连接的名称要一致的
-    host:'locahost' // 主机地址
-  })
-}));
+  secret: DBsetting.cookieSecret,
+  key: DBsetting.db,//cookie name
+  cookie: {maxAge: 1000 * 60 * 60 * 24 * 30},//30 days
+  resave: false,
+  saveUninitialized: true,
+  store: new MongoStore({
+    /*db: settings.db,
+    host: settings.host,
+    port: settings.port*/
+    url: 'mongodb://localhost/blog'
+  })}));
+
+
+routes(app);
 
 
 

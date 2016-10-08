@@ -1,5 +1,5 @@
 module.exports = {
-	cookieSecret:'felixTest',
+	cookieSecret:'felixRandomStringForEncrypt',
 	db:'blog',
 	host:'localhost'
 }
